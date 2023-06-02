@@ -49,7 +49,7 @@ def get_content(shard, query,count=10, low_price=0, top_price=0):
     headers = {'Accept': "*/*", 'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     data_list = []
     for page in range(1, count):
-        print(f'Сбор позиций со страницы {page} из 100')
+        print(f'Сбор позиций со страницы {page} из {count}')
         url = f'''https://catalog.wb.ru/catalog/{shard}/catalog?appType=1&{query}&curr=rub&dest=-1257786&page={page}&priceU={low_price * 100};{top_price * 100}&regions=80,64,38,4,115,83,33,68,70,69,30,86,75,40,1,66,48,110,31,22,71,114&sort=popular&spp=0'''
         r = requests.get(url, headers=headers)
         data = r.json()

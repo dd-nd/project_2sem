@@ -40,9 +40,8 @@ def get_catalogs_wb():
                     continue
         except:
             continue
+        
     return data_list # мб заносить не в лист, а в словарь чтобы каждый раз не вызывать функцию 
-
-   
 
 def choose_catalog(name_catalog):
     data_list = get_catalogs_wb()

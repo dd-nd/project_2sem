@@ -1,31 +1,39 @@
 import tkinter as tk
 from tkinter import messagebox
-from links import choose_catalog
 from main import get_content
+from links import choose_catalog
 
-# Функция для обработки нажатия кнопки
-def parse_data():
-    # Получаем значения из текстовых полей
-    count = int(count_entry.get())
-    low = int(low_entry.get())
-    top = int(top_entry.get())
+# Функция для обработки события нажатия кнопки "Поиск"
+def search():
+    catalog = catalog_var.get()
+    count = int(pages_entry.get())
+    low_price = int(min_price_entry.get())
+    top_price = int(max_price_entry.get())
 
-    try:
-        shard, query = choose_catalog(catalog_var.get())
-        data = get_content(shard, query, count, low, top)
-        # Отображаем результаты парсинга в текстовом поле
-        result_text.delete('1.0', tk.END)  # Очищаем текстовое поле
+    shard, query = choose_catalog(catalog_var.get())
+    if shard == 'Не найден':
+        messagebox.showerror("Ошибка", "Каталог не найден")
+        return
+
+    result = get_content(shard, query, count, low_price, top_price)
+    result_text.delete(1.0, tk.END)  # Очистка поля с результатами
+    for item in result:
+        result_text.insert(tk.END, f'{item}\n')
+
+    status_label.config(text="Сбор данных завершен.")
+    save_results(result)
+
+# Функция для сохранения результатов в файл
+def save_results(data):
+    with open("results.txt", "w", encoding="utf-8") as file:
         for item in data:
-            result_text.insert(tk.END, f"{item}\n")
-    except Exception as e:
-        messagebox.showerror("Ошибка", f"{e} Каталог не найден")
+            file.write(f'{item}\n')
 
-# Создаем графический интерфейс
+# Создание графического интерфейса
 window = tk.Tk()
-window.title("Парсер данных")
-window.geometry("400x300")
+window.title("Парсер приложения")
 
-# Создаем метку и текстовое поле для выбора каталога
+# Выпадающее меню выбора каталога
 catalog_label = tk.Label(window, text="Выберите каталог:")
 catalog_label.pack()
 
@@ -33,31 +41,34 @@ catalog_var = tk.StringVar()
 catalog_dropdown = tk.OptionMenu(window, catalog_var, "Здоровье", "Брюки", "Красота")
 catalog_dropdown.pack()
 
-# Создаем метки и текстовые поля для ввода параметров
-count_label = tk.Label(window, text="Количество страниц (до 100):")
-count_label.pack()
+# Поле ввода количества страниц
+pages_label = tk.Label(window, text="Количество страниц (до 100):")
+pages_label.pack()
+pages_entry = tk.Entry(window)
+pages_entry.pack()
 
-count_entry = tk.Entry(window)
-count_entry.pack()
+# Поле ввода минимальной цены
+min_price_label = tk.Label(window, text="Минимальная цена:")
+min_price_label.pack()
+min_price_entry = tk.Entry(window)
+min_price_entry.pack()
 
-low_label = tk.Label(window, text="Нижняя цена:")
-low_label.pack()
+# Поле ввода максимальной цены
+max_price_label = tk.Label(window, text="Максимальная цена:")
+max_price_label.pack()
+max_price_entry = tk.Entry(window)
+max_price_entry.pack()
 
-low_entry = tk.Entry(window)
-low_entry.pack()
+# Кнопка "Поиск"
+search_button = tk.Button(window, text="Поиск", command=search)
+search_button.pack()
 
-top_label = tk.Label(window, text="Верхняя цена:")
-top_label.pack()
-
-top_entry = tk.Entry(window)
-top_entry.pack()
-
-# Создаем кнопку для запуска парсинга
-parse_button = tk.Button(window, text="Начать парсинг", command=parse_data)
-parse_button.pack()
-
-# Создаем текстовое поле для отображения результатов
+# Поле с результатами
 result_text = tk.Text(window)
 result_text.pack()
+
+# Label для отображения статуса работы
+status_label = tk.Label(window, text="", fg="green")
+status_label.pack()
 
 window.mainloop()
