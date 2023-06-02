@@ -31,7 +31,8 @@ def save_results(data):
 
 # Создание графического интерфейса
 window = tk.Tk()
-window.title("Парсер приложения")
+window.title("Парсинг данных")
+window.geometry("500x300")
 
 # Выпадающее меню выбора каталога
 catalog_label = tk.Label(window, text="Выберите каталог:")
